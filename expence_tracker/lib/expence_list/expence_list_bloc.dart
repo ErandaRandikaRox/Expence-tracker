@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:expense_tracker/models/catergory.dart';
 import 'package:expense_tracker/models/expence.dart';
 import 'package:expense_tracker/repositories/expence_reporsitory.dart';
 import 'package:meta/meta.dart';

@@ -1,7 +1,7 @@
 part of 'expence_list_bloc.dart';
 
 
-@immutable
+@immutable@immutable
 sealed class ExpenseListEvent extends Equatable {
   const ExpenseListEvent();
 
@@ -23,7 +23,7 @@ final class ExpenseListExpenseDeleted extends ExpenseListEvent {
 }
 
 final class ExpenseListCategoryRequired extends ExpenseListEvent {
-  final Category category;
+  final Catergory category;
 
   const ExpenseListCategoryRequired(this.category);
 

@@ -43,7 +43,8 @@ class Expence extends Equatable {
     String? title,
     double? amount,
     DateTime? date,
-    Catergory? catergory, required String id,
+    Catergory? catergory,
+    required String id,
   }) {
     return Expence(
       id: id,
