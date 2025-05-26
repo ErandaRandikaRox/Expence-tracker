@@ -3,11 +3,12 @@ part of 'expence_list_bloc.dart';
 
 @immutable@immutable
 @immutable
+@immutable
 sealed class ExpenseListEvent extends Equatable {
   const ExpenseListEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 final class ExpenseListSubscriptionRequested extends ExpenseListEvent {
@@ -48,4 +49,13 @@ final class ExpenseListExpenseUpdated extends ExpenseListEvent {
 
   @override
   List<Object> get props => [expense];
+}
+
+final class FilterExpenses extends ExpenseListEvent {
+  final Catergory? category;
+
+  const FilterExpenses(this.category);
+
+  @override
+  List<Object?> get props => [category];
 }

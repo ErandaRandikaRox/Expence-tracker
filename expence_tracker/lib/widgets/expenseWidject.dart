@@ -20,13 +20,14 @@ class ExpenseWidget extends StatelessWidget {
           return const Center(child: Text('No expenses found'));
         }
         return ListView.separated(
+          shrinkWrap: true, // Add this
+          primary: false,
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) => ExpenseTitleWidget(
-            expense: expenses[index], // Pass the specific expense
+            expense: expenses[index],
           ),
           separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemCount: expenses.length,
-          primary: false,
-          physics: const NeverScrollableScrollPhysics(),
         );
       },
     );

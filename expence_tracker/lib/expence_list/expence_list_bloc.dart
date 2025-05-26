@@ -11,7 +11,7 @@ part 'expence_list_state.dart';
 class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
   final ExpenceReporsitory repository;
 
-  ExpenseListBloc({required ExpenceReporsitory repository}) // Fix: Changed 'ekspence_reporsitory' to 'ExpenceReporsitory'
+  ExpenseListBloc({required ExpenceReporsitory repository})
       : repository = repository,
         super(const ExpenseListState()) {
     on<ExpenseListSubscriptionRequested>(_onSubscriptionRequested);
@@ -19,6 +19,7 @@ class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
     on<ExpenseListCategoryRequired>(_onExpenseCategoryFilterChanged);
     on<AddExpenseEvent>(_onExpenseAdded);
     on<ExpenseListExpenseUpdated>(_onExpenseUpdated);
+    on<FilterExpenses>(_onFilterExpenses); // Add this line
   }
 
   Future<void> _onSubscriptionRequested(
@@ -101,5 +102,12 @@ class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
     } catch (e) {
       emit(state.copyWith(status: ExpenseListStatus.failed));
     }
+  }
+
+  Future<void> _onFilterExpenses(
+    FilterExpenses event,
+    Emitter<ExpenseListState> emit,
+  ) async {
+    emit(state.copyWith(filter: event.category ?? Catergory.all));
   }
 }
