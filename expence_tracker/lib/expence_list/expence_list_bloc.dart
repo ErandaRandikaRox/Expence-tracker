@@ -43,7 +43,7 @@ class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
     Emitter<ExpenseListState> emit,
   ) async {
     try {
-      await repository.deleteExpences(event.expense.id as Expence);
+      await repository.deleteExpense(event.expense.id as Expence);
       final updatedExpenses = state.expenses.where((e) => e.id != event.expense.id).toList();
       final totalExpenses = updatedExpenses.fold(0.0, (sum, expense) => sum + expense.amount);
       emit(state.copyWith(

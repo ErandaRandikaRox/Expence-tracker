@@ -33,21 +33,21 @@ class Expence extends Equatable {
     return {
       'id': id,
       'name': title,
-      'amount': amount,
+      'amount': amount.toString(), // Ensure string for JSON
       'date': date.microsecondsSinceEpoch,
       'catergory': catergory.toJson(),
     };
   }
 
   Expence copyWith({
+    String? id,
     String? title,
     double? amount,
     DateTime? date,
     Catergory? catergory,
-    required String id,
   }) {
     return Expence(
-      id: id,
+      id: id ?? this.id,
       title: title ?? this.title,
       amount: amount ?? this.amount,
       date: date ?? this.date,
