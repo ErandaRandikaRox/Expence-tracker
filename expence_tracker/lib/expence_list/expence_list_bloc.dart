@@ -7,16 +7,18 @@ import 'package:equatable/equatable.dart';
 
 part 'expence_list_event.dart';
 part 'expence_list_state.dart';
+
 class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
   final ExpenceReporsitory repository;
 
-  ExpenseListBloc({required ExpenceReporsitory repository})
+  ExpenseListBloc({required ExpenceReporsitory repository}) // Fix: Changed 'ekspence_reporsitory' to 'ExpenceReporsitory'
       : repository = repository,
         super(const ExpenseListState()) {
     on<ExpenseListSubscriptionRequested>(_onSubscriptionRequested);
     on<ExpenseListExpenseDeleted>(_onExpenseDeleted);
     on<ExpenseListCategoryRequired>(_onExpenseCategoryFilterChanged);
     on<AddExpenseEvent>(_onExpenseAdded);
+    on<ExpenseListExpenseUpdated>(_onExpenseUpdated);
   }
 
   Future<void> _onSubscriptionRequested(
@@ -43,7 +45,7 @@ class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
     Emitter<ExpenseListState> emit,
   ) async {
     try {
-      await repository.deleteExpense(event.expense.id as Expence);
+      await repository.deleteExpense(event.expense);
       final updatedExpenses = state.expenses.where((e) => e.id != event.expense.id).toList();
       final totalExpenses = updatedExpenses.fold(0.0, (sum, expense) => sum + expense.amount);
       emit(state.copyWith(
@@ -70,6 +72,26 @@ class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
     try {
       await repository.addExpense(event.expense);
       final updatedExpenses = [...state.expenses, event.expense];
+      final totalExpenses = updatedExpenses.fold(0.0, (sum, expense) => sum + expense.amount);
+      emit(state.copyWith(
+        expenses: updatedExpenses,
+        totalExpenses: totalExpenses,
+        status: ExpenseListStatus.success,
+      ));
+    } catch (e) {
+      emit(state.copyWith(status: ExpenseListStatus.failed));
+    }
+  }
+
+  Future<void> _onExpenseUpdated(
+    ExpenseListExpenseUpdated event,
+    Emitter<ExpenseListState> emit,
+  ) async {
+    try {
+      await repository.updateExpense(event.expense);
+      final updatedExpenses = state.expenses.map((e) {
+        return e.id == event.expense.id ? event.expense : e;
+      }).toList();
       final totalExpenses = updatedExpenses.fold(0.0, (sum, expense) => sum + expense.amount);
       emit(state.copyWith(
         expenses: updatedExpenses,

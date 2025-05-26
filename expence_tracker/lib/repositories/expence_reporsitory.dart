@@ -8,9 +8,11 @@ class ExpenceReporsitory {
 
   Future<void> createExpence(Expence expence) => _storage.saveExpences(expence);
 
-  Future<void> deleteExpense(Expence expence) => _storage.deleteExpences(expence); // Corrected typo
+  Future<void> deleteExpense(Expence expence) => _storage.deleteExpences(expence);
 
   Stream<List<Expence?>> getAllExpences() => _storage.getExpences();
 
-  Future<void> addExpense(Expence expence) => createExpence(expence); // Implemented
+  Future<void> addExpense(Expence expence) => createExpence(expence);
+
+  Future<void> updateExpense(Expence expence) => _storage.saveExpences(expence);
 }
