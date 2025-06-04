@@ -1,6 +1,5 @@
 part of 'expense_form_bloc.dart';
 
-
 abstract class ExpenseFormEvent extends Equatable {
   const ExpenseFormEvent();
 
@@ -18,7 +17,7 @@ class ExpenseTitleChanged extends ExpenseFormEvent {
 
 class ExpenseAmountChanged extends ExpenseFormEvent {
   const ExpenseAmountChanged(this.amount);
-  final String amount;
+  final double amount;
 
   @override
   List<Object> get props => [amount];
