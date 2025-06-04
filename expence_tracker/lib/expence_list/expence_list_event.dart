@@ -3,7 +3,6 @@ part of 'expence_list_bloc.dart';
 
 @immutable@immutable
 @immutable
-@immutable
 sealed class ExpenseListEvent extends Equatable {
   const ExpenseListEvent();
 

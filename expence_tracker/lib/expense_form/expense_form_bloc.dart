@@ -99,17 +99,17 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
 
     final expense = (state.initialExpence)?.copyWith(
           id: state.initialExpence!.id,
-          title: state.title!,
-          amount: state.amount!,
+          title: state.title,
+          amount: state.amount,
           date: state.date!,
-          catergory: state.catergory!,
+          catergory: state.catergory,
         ) ??
         Expence(
           id: const Uuid().v4(),
-          title: state.title!,
-          amount: state.amount!,
+          title: state.title,
+          amount: state.amount,
           date: state.date!,
-          catergory: state.catergory!,
+          catergory: state.catergory,
         );
 
     emit(state.copyWith(status: ExpenseFormStatus.loading));
@@ -120,7 +120,7 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
         _context.read<ExpenseListBloc>().add(ExpenseListExpenseUpdated(expense));
       } else {
         await _repository.createExpence(expense);
-        _context.read<ExpenseListBloc>().add(ExpenseListExpenseAdded(expense));
+        _context.read<ExpenseListBloc>().add(AddExpenseEvent(expense)); // Changed to AddExpenseEvent
       }
       emit(
         state.copyWith(
