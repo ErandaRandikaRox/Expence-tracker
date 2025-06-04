@@ -3,28 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-class Datefieldwidject extends StatelessWidget {
-  const Datefieldwidject({super.key});
+class DateFieldWidget extends StatelessWidget {
+  const DateFieldWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorsheme = theme.colorScheme;
-    final TextTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
-    final bloc = context.read<ExpenseFormBloc>();
     final state = context.watch<ExpenseFormBloc>().state;
-    final formatedate = DateFormat('DD//MM/YY').format(DateTime.now());
+    final bloc = context.read<ExpenseFormBloc>();
+
+    // Use state.date if available, otherwise fallback to current date
+    final displayDate = state.date ?? DateTime.now();
+    final formattedDate = DateFormat('dd/MM/yy').format(displayDate);
+
     return GestureDetector(
       onTap: () async {
         final today = DateTime.now();
-        final selectdate = await showDatePicker(
+        final selectedDate = await showDatePicker(
           context: context,
           firstDate: DateTime(1999),
           lastDate: DateTime(today.year + 50),
         );
-        if (selectdate != null) {
-          bloc.add(ExpenseDateChanged(selectdate));
+        if (selectedDate != null) {
+          bloc.add(ExpenseDateChanged(selectedDate));
         }
       },
       child: Column(
@@ -33,14 +37,17 @@ class Datefieldwidject extends StatelessWidget {
         children: [
           Text(
             'Date',
-            style: TextTheme.labelLarge?.copyWith(
-              color: colorsheme.onBackground.withOpacity(0.5),
+            style: textTheme.labelLarge?.copyWith(
+              color: colorScheme.onBackground.withOpacity(0.5),
               height: 1,
               fontWeight: FontWeight.w400,
             ),
           ),
-          const SizedBox(height: 10,),
-          Text(formatedate,style: TextTheme.titleLarge,)
+          const SizedBox(height: 10),
+          Text(
+            formattedDate,
+            style: textTheme.titleLarge,
+          ),
         ],
       ),
     );

@@ -1,14 +1,17 @@
 import 'package:expense_tracker/expence_list/expence_list_bloc.dart';
 import 'package:expense_tracker/expense_form/expense_form_bloc.dart';
 import 'package:expense_tracker/repositories/expence_reporsitory.dart';
+import 'package:expense_tracker/widgets/%20amountFieldWidject.dart';
 import 'package:expense_tracker/widgets/addButtonWidject.dart';
+import 'package:expense_tracker/widgets/catergoryfieldWidject.dart';
+import 'package:expense_tracker/widgets/dateFieldWidject.dart';
+
 import 'package:expense_tracker/widgets/expenceFilterWidject.dart';
 import 'package:expense_tracker/widgets/expenseWidject.dart';
 import 'package:expense_tracker/widgets/textFieldWidgect.dart';
+
+
 import 'package:expense_tracker/widgets/totalExpenceWidject.dart';
-import 'package:expense_tracker/widgets/amountfieldwidject.dart';
-import 'package:expense_tracker/widgets/catergoryfieldWidject.dart';
-import 'package:expense_tracker/widgets/datefieldwidject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,7 +30,7 @@ class Home extends StatelessWidget {
               builder: (context, state) {
                 final totalAmount = state.filteredExpences.fold<double>(
                   0.0,
-                  (sum, expense) => sum + (expense.amount ?? 0.0),
+                  (sum, expense) => sum + expense.amount,
                 );
                 return TotalExpenseWidget(totalAmount: totalAmount);
               },
@@ -69,19 +72,20 @@ class Home extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      TextFieldWidgect(),
+                       TextFieldWidgect(),
                       const SizedBox(height: 16),
-                      Amountfieldwidject(),
+                       Amountfieldwidject(),
                       const SizedBox(height: 16),
-                      const CatergoryfieldWidject(),
+                      CatergoryfieldWidject(),
                       const SizedBox(height: 16),
-                      const Datefieldwidject(),
+                      const DateFieldWidget(), // Changed from Datefieldwidject
                       const SizedBox(height: 16),
                       BlocListener<ExpenseFormBloc, ExpenseFormState>(
                         listener: (context, state) {
                           if (state.status == ExpenseFormStatus.success) {
                             Navigator.pop(context);
-                          } else if (state.status == ExpenseFormStatus.failure && state.errorMessage != null) {
+                          } else if (state.status == ExpenseFormStatus.failure &&
+                              state.errorMessage != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(state.errorMessage!)),
                             );
