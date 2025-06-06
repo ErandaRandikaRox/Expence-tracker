@@ -10,7 +10,7 @@ class TextFieldWidgect extends StatelessWidget {
     final TextTheme = Theme.of(context).textTheme;
     final state = context.watch<ExpenseFormBloc>().state;
     return TextFormField(
-      style: TextTheme.displaySmall?.copyWith(fontSize: 10),
+      style: TextTheme.displaySmall?.copyWith(fontSize: 16),
       onChanged: (value) {
         context.read<ExpenseFormBloc>().add(ExpenseTitleChanged(value));
       },
