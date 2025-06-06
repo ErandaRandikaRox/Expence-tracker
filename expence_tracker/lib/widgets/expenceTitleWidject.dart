@@ -28,9 +28,7 @@ class ExpenseTitleWidget extends StatelessWidget {
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        context.read<ExpenseListBloc>().add(
-              ExpenseListExpenseDeleted(expense),
-            );
+        context.read<ExpenseListBloc>().add(ExpenseListExpenseDeleted(expense));
       },
       child: ListTile(
         onTap: () {
@@ -50,7 +48,9 @@ class ExpenseTitleWidget extends StatelessWidget {
 
   void _showEditExpenseSheet(BuildContext context, Expence expense) {
     final titleController = TextEditingController(text: expense.title);
-    final amountController = TextEditingController(text: expense.amount.toString());
+    final amountController = TextEditingController(
+      text: expense.amount.toString(),
+    );
     final dateController = TextEditingController(
       text: DateFormat('dd/MM/yy').format(expense.date),
     );
@@ -59,82 +59,99 @@ class ExpenseTitleWidget extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 16,
-          right: 16,
-          top: 16,
-        ),
-        child: StatefulBuilder(
-          builder: (context, setState) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: 'Expense Title'),
-              ),
-              TextField(
-                controller: amountController,
-                decoration: const InputDecoration(labelText: 'Amount'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: dateController,
-                decoration: const InputDecoration(labelText: 'Date (dd/MM/yy)'),
-                readOnly: true,
-                onTap: () async {
-                  final pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: expense.date,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  );
-                  if (pickedDate != null) {
-                    dateController.text = DateFormat('dd/MM/yy').format(pickedDate);
-                  }
-                },
-              ),
-              DropdownButton<Catergory>(
-                value: selectedCategory,
-                hint: const Text('Select Category'),
-                items: Catergory.values.map((Catergory category) {
-                  return DropdownMenuItem<Catergory>(
-                    value: category,
-                    child: Text(category.toString().split('.').last),
-                  );
-                }).toList(),
-                onChanged: (Catergory? newValue) {
-                  setState(() {
-                    selectedCategory = newValue;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  final updatedExpense = Expence(
-                    id: expense.id,
-                    title: titleController.text.isNotEmpty
-                        ? titleController.text
-                        : expense.title,
-                    amount: double.tryParse(amountController.text) ?? expense.amount,
-                    date: DateFormat('dd/MM/yy').tryParse(dateController.text) ??
-                        expense.date,
-                    catergory: selectedCategory ?? expense.catergory,
-                  );
-                  context.read<ExpenseListBloc>().add(
-                        ExpenseListExpenseUpdated(updatedExpense),
-                      );
-                  Navigator.pop(context);
-                },
-                child: const Text('Save'),
-              ),
-              const SizedBox(height: 16),
-            ],
+      builder:
+          (context) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16,
+              right: 16,
+              top: 16,
+            ),
+            child: StatefulBuilder(
+              builder:
+                  (context, setState) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: titleController,
+                        decoration: const InputDecoration(
+                          labelText: 'Expense Title',
+                        ),
+                      ),
+                      TextField(
+                        controller: amountController,
+                        decoration: const InputDecoration(labelText: 'Amount'),
+                        keyboardType: TextInputType.number,
+                      ),
+                      TextField(
+                        controller: dateController,
+                        decoration: const InputDecoration(
+                          labelText: 'Date (dd/MM/yy)',
+                        ),
+                        readOnly: true,
+                        onTap: () async {
+                          final pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: expense.date,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(),
+                          );
+                          if (pickedDate != null) {
+                            dateController.text = DateFormat(
+                              'dd/MM/yy',
+                            ).format(pickedDate);
+                          }
+                        },
+                      ),
+                      DropdownButton<Catergory>(
+                        value: selectedCategory,
+                        hint: const Text('Select Category'),
+                        items:
+                            Catergory.values.map((Catergory category) {
+                              return DropdownMenuItem<Catergory>(
+                                value: category,
+                                child: Text(
+                                  category.toString().split('.').last,
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (Catergory? newValue) {
+                          setState(() {
+                            selectedCategory = newValue;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          final updatedExpense = Expence(
+                            id: expense.id,
+                            title:
+                                titleController.text.isNotEmpty
+                                    ? titleController.text
+                                    : expense.title,
+                            amount:
+                                double.tryParse(amountController.text) ??
+                                expense.amount,
+                            date:
+                                DateFormat(
+                                  'dd/MM/yy',
+                                ).tryParse(dateController.text) ??
+                                expense.date,
+                            catergory: selectedCategory ?? expense.catergory,
+                          );
+                          context.read<ExpenseListBloc>().add(
+                            ExpenseListExpenseUpdated(updatedExpense),
+                          );
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Save'),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+            ),
           ),
-        ),
-      ),
     );
   }
 }
