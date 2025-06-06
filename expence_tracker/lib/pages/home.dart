@@ -40,71 +40,121 @@ class Home extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => BlocProvider(
-              create: (context) => ExpenseFormBloc(
-                repository: RepositoryProvider.of<ExpenceRepository>(context),
-                context: context,
+      floatingActionButton: Container(
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(16),
+    gradient: LinearGradient(
+      colors: [
+        Theme.of(context).primaryColor,
+        Theme.of(context).primaryColor.withOpacity(0.8),
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: Theme.of(context).primaryColor.withOpacity(0.3),
+        blurRadius: 12,
+        offset: const Offset(0, 6),
+      ),
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 8,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  ),
+  child: Material(
+    color: Colors.transparent,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (context) => BlocProvider(
+            create: (context) => ExpenseFormBloc(
+              repository: RepositoryProvider.of<ExpenceRepository>(context),
+              context: context,
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
               ),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                  left: 16,
-                  right: 16,
-                  top: 16,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Text(
-                        'Add New Expense',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'Add New Expense',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 16),
-                       TextFieldWidgect(),
-                      const SizedBox(height: 16),
-                       AmountFieldWidget(),
-                      const SizedBox(height: 16),
-                      CatergoryfieldWidject(),
-                      const SizedBox(height: 16),
-                      const DateFieldWidget(), // Changed from Datefieldwidject
-                      const SizedBox(height: 16),
-                      BlocListener<ExpenseFormBloc, ExpenseFormState>(
-                        listener: (context, state) {
-                          if (state.status == ExpenseFormStatus.success) {
-                            Navigator.pop(context);
-                          } else if (state.status == ExpenseFormStatus.failure &&
-                              state.errorMessage != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.errorMessage!)),
-                            );
-                          }
-                        },
-                        child: const AddButtonWidget(),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFieldWidgect(),
+                    const SizedBox(height: 16),
+                    AmountFieldWidget(),
+                    const SizedBox(height: 16),
+                    CatergoryfieldWidject(),
+                    const SizedBox(height: 16),
+                    const DateFieldWidget(),
+                    const SizedBox(height: 16),
+                    BlocListener<ExpenseFormBloc, ExpenseFormState>(
+                      listener: (context, state) {
+                        if (state.status == ExpenseFormStatus.success) {
+                          Navigator.pop(context);
+                        } else if (state.status == ExpenseFormStatus.failure &&
+                            state.errorMessage != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.errorMessage!)),
+                          );
+                        }
+                      },
+                      child: const AddButtonWidget(),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
               ),
             ),
-          );
-        },
-        child: const Icon(Icons.add),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.add_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'Add Expense',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
+    ),
+  ),
+),
     );
   }
 }
