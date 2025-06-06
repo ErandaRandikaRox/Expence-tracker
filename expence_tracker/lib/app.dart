@@ -5,10 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class App extends StatelessWidget {
-  const App({super.key, required ExpenceRepository expenceReporsitory})
-    : expenceReporsitory = expenceReporsitory;
+  const App({
+    super.key,
+    required this.expenceReporsitory,
+    required this.theme,
+    required this.darkTheme,
+  });
 
   final ExpenceRepository expenceReporsitory;
+  final ThemeData theme;
+  final ThemeData darkTheme;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,13 @@ class App extends StatelessWidget {
       value: expenceReporsitory,
       child: BlocProvider(
         create: (context) => ExpenseListBloc(repository: expenceReporsitory),
-        child: MaterialApp(home: Home(), debugShowCheckedModeBanner: false),
+        child: MaterialApp(
+          theme: theme, // Apply the light theme
+          darkTheme: darkTheme, // Apply the dark theme
+          themeMode: ThemeMode.system, // Use system theme mode (light/dark)
+          home: const Home(),
+          debugShowCheckedModeBanner: false,
+        ),
       ),
     );
   }
