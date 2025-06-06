@@ -5,12 +5,9 @@ import 'package:expense_tracker/widgets/%20amountFieldWidject.dart';
 import 'package:expense_tracker/widgets/addButtonWidject.dart';
 import 'package:expense_tracker/widgets/catergoryfieldWidject.dart';
 import 'package:expense_tracker/widgets/dateFieldWidject.dart';
-
 import 'package:expense_tracker/widgets/expenceFilterWidject.dart';
 import 'package:expense_tracker/widgets/expenseWidject.dart';
 import 'package:expense_tracker/widgets/textFieldWidgect.dart';
-
-
 import 'package:expense_tracker/widgets/totalExpenceWidject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -74,7 +71,7 @@ class Home extends StatelessWidget {
                       const SizedBox(height: 16),
                        TextFieldWidgect(),
                       const SizedBox(height: 16),
-                       Amountfieldwidject(),
+                       AmountFieldWidget(),
                       const SizedBox(height: 16),
                       CatergoryfieldWidject(),
                       const SizedBox(height: 16),
