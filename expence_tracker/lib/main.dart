@@ -11,7 +11,7 @@ Future<void> main() async {
     preferences: await SharedPreferences.getInstance(),
   );
 
-  final expenceReporsitory = ExpenceReporsitory(storage: storage);
+  final expenceReporsitory = ExpenceRepository(storage: storage);
 
   runApp(App(expenceReporsitory:expenceReporsitory));
 }

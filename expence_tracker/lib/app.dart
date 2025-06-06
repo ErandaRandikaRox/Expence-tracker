@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class App extends StatelessWidget {
-  const App({super.key, required ExpenceReporsitory expenceReporsitory})
+  const App({super.key, required ExpenceRepository expenceReporsitory})
     : expenceReporsitory = expenceReporsitory;
 
-  final ExpenceReporsitory expenceReporsitory;
+  final ExpenceRepository expenceReporsitory;
 
   @override
   Widget build(BuildContext context) {

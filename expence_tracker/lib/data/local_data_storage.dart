@@ -10,72 +10,112 @@ class LocalDataStorage {
   }
 
   final SharedPreferences _preferences;
-
   static const expenseCollectionKey = 'Expence_collection_key';
-
-  final _controller = BehaviorSubject<List<Expence?>>.seeded(const []);
+  
+  // Fixed: Use non-nullable list
+  final _controller = BehaviorSubject<List<Expence>>.seeded(const []);
 
   void initialize() {
     final expenceJson = _preferences.getString(expenseCollectionKey);
+    print('Initializing storage. Found data: ${expenceJson != null}');
+    
     if (expenceJson != null) {
       try {
         final expenceList = List<dynamic>.from(jsonDecode(expenceJson) as List);
-        final expences = expenceList.map((expense) => Expence.fromJson(expense)).toList();
+        final expences = expenceList
+            .map((expense) => Expence.fromJson(expense as Map<String, dynamic>))
+            .toList();
         _controller.add(expences);
+        print('Loaded ${expences.length} expenses from storage');
       } catch (e) {
-        _controller.add(const []); // Fallback to empty list on JSON decode error
+        print('Error loading expenses: $e');
+        _controller.add(const []);
       }
     } else {
+      print('No existing data found, starting with empty list');
       _controller.add(const []);
     }
   }
 
-  Stream<List<Expence?>> getExpences() => _controller.asBroadcastStream();
+  // Fixed: Return non-nullable list
+  Stream<List<Expence>> getExpences() => _controller.asBroadcastStream();
 
   Future<void> saveExpences(Expence expense) async {
-    final expences = [..._controller.value];
-    final expencesIndex = expences.indexWhere(
-      (currentExpences) => currentExpences?.id == expense.id,
-    );
-
-    if (expencesIndex >= 0) {
-      expences[expencesIndex] = expense; // Update existing expense
-    } else {
-      expences.add(expense); // Add new expense
-    }
-    _controller.add(expences);
+    print('Saving expense: ${expense.title} - \$${expense.amount}');
+    
     try {
-      await _preferences.setString(
-        expenseCollectionKey,
-        jsonEncode(expences.map((e) => e!.toJson()).toList()),
+      final expences = List<Expence>.from(_controller.value);
+      final expencesIndex = expences.indexWhere(
+        (currentExpence) => currentExpence.id == expense.id,
       );
+
+      if (expencesIndex >= 0) {
+        expences[expencesIndex] = expense;
+        print('Updated existing expense at index $expencesIndex');
+      } else {
+        expences.add(expense);
+        print('Added new expense. Total count: ${expences.length}');
+      }
+
+      // Update the stream controller
+      _controller.add(expences);
+
+      // Save to SharedPreferences
+      final jsonData = expences.map((e) => e.toJson()).toList();
+      final jsonString = jsonEncode(jsonData);
+      
+      print('Saving JSON: $jsonString');
+      
+      final success = await _preferences.setString(expenseCollectionKey, jsonString);
+      
+      if (success) {
+        print('Successfully saved to SharedPreferences');
+        
+        // Verify the save by reading it back
+        final verification = _preferences.getString(expenseCollectionKey);
+        print('Verification read: ${verification != null ? "Success" : "Failed"}');
+      } else {
+        throw Exception('SharedPreferences.setString returned false');
+      }
     } catch (e) {
-      throw Exception('Failed to save expense: $e');
+      print('Error in saveExpences: $e');
+      rethrow;
     }
   }
 
   Future<void> deleteExpences(Expence expense) async {
-    final expences = [..._controller.value];
-    final expencesIndex = expences.indexWhere(
-      (currentExpences) => currentExpences?.id == expense.id,
-    );
-
-    if (expencesIndex < 0) {
-      throw Exception('No expense found');
-    }
-    expences.removeAt(expencesIndex);
-    _controller.add(expences);
+    print('Deleting expense: ${expense.title}');
+    
     try {
-      await _preferences.setString(
-        expenseCollectionKey,
-        jsonEncode(expences.map((e) => e!.toJson()).toList()),
+      final expences = List<Expence>.from(_controller.value);
+      final expencesIndex = expences.indexWhere(
+        (currentExpence) => currentExpence.id == expense.id,
       );
+
+      if (expencesIndex < 0) {
+        throw Exception('No expense found with id: ${expense.id}');
+      }
+
+      expences.removeAt(expencesIndex);
+      _controller.add(expences);
+
+      final jsonData = expences.map((e) => e.toJson()).toList();
+      final jsonString = jsonEncode(jsonData);
+      
+      final success = await _preferences.setString(expenseCollectionKey, jsonString);
+      
+      if (success) {
+        print('Successfully deleted expense');
+      } else {
+        throw Exception('Failed to save after deletion');
+      }
     } catch (e) {
-      throw Exception('Failed to delete expense: $e');
+      print('Error in deleteExpences: $e');
+      rethrow;
     }
   }
 
   void dispose() {
-    _controller.close(); // Clean up the stream controller
+    _controller.close();
   }
 }

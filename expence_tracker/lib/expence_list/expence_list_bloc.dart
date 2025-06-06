@@ -9,9 +9,9 @@ part 'expence_list_event.dart';
 part 'expence_list_state.dart';
 
 class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
-  final ExpenceReporsitory repository;
+  final ExpenceRepository repository;
 
-  ExpenseListBloc({required ExpenceReporsitory repository})
+  ExpenseListBloc({required ExpenceRepository repository})
       : repository = repository,
         super(const ExpenseListState()) {
     on<ExpenseListSubscriptionRequested>(_onSubscriptionRequested);

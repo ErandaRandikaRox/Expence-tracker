@@ -13,7 +13,7 @@ extension Appx on BuildContext {
           (context) => BlocProvider(
             create: (context) => ExpenseFormBloc(
               initialExpence: expence,
-              repository:  read<ExpenceReporsitory>(),
+              repository:  read<ExpenceRepository>(),
               context: this
                ),
             child: Container(),

@@ -13,7 +13,7 @@ part 'expense_form_state.dart';
 
 class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
   ExpenseFormBloc({
-    required ExpenceReporsitory repository,
+    required ExpenceRepository repository, // Fixed: Consistent naming
     required BuildContext context,
     Expence? initialExpence,
   }) : _repository = repository,
@@ -40,13 +40,14 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
     on<ExpenseFormSubmitted>(_onSubmitted);
   }
 
-  final ExpenceReporsitory _repository;
+  final ExpenceRepository _repository; // Fixed: Consistent naming
   final BuildContext _context;
 
   void _onTitleChanged(
     ExpenseTitleChanged event,
     Emitter<ExpenseFormState> emit,
   ) {
+    print('Title changed to: ${event.title}');
     emit(state.copyWith(
       title: event.title,
       isFormValid: _isFormValid(event.title, state.amount, state.catergory, state.date),
@@ -57,6 +58,7 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
     ExpenseAmountChanged event,
     Emitter<ExpenseFormState> emit,
   ) {
+    print('Amount changed to: ${event.amount}');
     emit(state.copyWith(
       amount: event.amount,
       isFormValid: _isFormValid(state.title, event.amount, state.catergory, state.date),
@@ -67,6 +69,7 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
     ExpenseDateChanged event,
     Emitter<ExpenseFormState> emit,
   ) {
+    print('Date changed to: ${event.date}');
     emit(state.copyWith(
       date: event.date,
       isFormValid: _isFormValid(state.title, state.amount, state.catergory, event.date),
@@ -77,6 +80,7 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
     ExpenseCategoryChanged event,
     Emitter<ExpenseFormState> emit,
   ) {
+    print('Category changed to: ${event.catergory}');
     emit(state.copyWith(
       catergory: event.catergory,
       isFormValid: _isFormValid(state.title, state.amount, event.catergory, state.date),
@@ -87,6 +91,9 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
     ExpenseFormSubmitted event,
     Emitter<ExpenseFormState> emit,
   ) async {
+    print('Form submitted. Valid: ${state.isFormValid}');
+    print('Title: "${state.title}", Amount: ${state.amount}, Category: ${state.catergory}, Date: ${state.date}');
+    
     if (!state.isFormValid) {
       emit(
         state.copyWith(
@@ -112,16 +119,25 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
           catergory: state.catergory,
         );
 
+    print('Created expense object: ${expense.toJson()}');
     emit(state.copyWith(status: ExpenseFormStatus.loading));
 
     try {
       if (state.initialExpence != null) {
+        print('Updating existing expense');
         await _repository.updateExpense(expense);
-        _context.read<ExpenseListBloc>().add(ExpenseListExpenseUpdated(expense));
+        if (_context.mounted) {
+          _context.read<ExpenseListBloc>().add(ExpenseListExpenseUpdated(expense));
+        }
       } else {
+        print('Creating new expense');
         await _repository.createExpence(expense);
-        _context.read<ExpenseListBloc>().add(AddExpenseEvent(expense)); // Changed to AddExpenseEvent
+        if (_context.mounted) {
+          _context.read<ExpenseListBloc>().add(AddExpenseEvent(expense));
+        }
       }
+      
+      print('Successfully saved expense');
       emit(
         state.copyWith(
           status: ExpenseFormStatus.success,
@@ -135,6 +151,7 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
         ),
       );
     } catch (e) {
+      print('Error saving expense: $e');
       emit(
         state.copyWith(
           status: ExpenseFormStatus.failure,
@@ -145,12 +162,15 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
   }
 
   static bool _isFormValid(String? title, double? amount, Catergory? catergory, DateTime? date) {
-    return title != null &&
+    final valid = title != null &&
         title.isNotEmpty &&
         amount != null &&
         amount > 0 &&
         catergory != null &&
         catergory != Catergory.all &&
         date != null;
+    
+    print('Form validation: $valid (title: $title, amount: $amount, category: $catergory, date: $date)');
+    return valid;
   }
 }

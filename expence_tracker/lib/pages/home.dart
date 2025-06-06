@@ -46,7 +46,7 @@ class Home extends StatelessWidget {
             isScrollControlled: true,
             builder: (context) => BlocProvider(
               create: (context) => ExpenseFormBloc(
-                repository: RepositoryProvider.of<ExpenceReporsitory>(context),
+                repository: RepositoryProvider.of<ExpenceRepository>(context),
                 context: context,
               ),
               child: Padding(
